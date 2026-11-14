@@ -1,0 +1,17 @@
+name: deploydb
+on:
+  workflow_dispatch:
+
+jobs:
+  load-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cargar datos en PostgreSQL
+        env:
+          PGHOST: ${{ secrets.PG_HOST }}
+          PGUSER: pgadmin
+          PGPASSWORD: ${{ secrets.PG_PASSWORD }}
+          PGDATABASE: tarjetasdb
+          PGSSLMODE: require
+        run: psql -f data/seed.sql
