@@ -6,6 +6,18 @@ jobs:
   load-data:
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar secrets requeridos
+        env:
+          S_PG_HOST: ${{ secrets.PG_HOST }}
+          S_PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        run: |
+          faltan=""
+          for v in ${!S_@}; do if [ -z "${!v}" ]; then faltan="$faltan ${v#S_}"; fi; done
+          if [ -n "$faltan" ]; then
+            echo "::error title=Faltan secrets de despliegue::Configure en Settings > Secrets and variables > Actions:$faltan. Se obtienen al crear la suscripcion de Azure (ver PENDIENTES)."
+            exit 1
+          fi
+          echo "Secrets configurados"
       - uses: actions/checkout@v4
       - name: Cargar datos en PostgreSQL
         env:
