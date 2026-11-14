@@ -14,8 +14,7 @@ env:
   TF_VAR_atlas_private_key: ${{ secrets.ATLAS_PRIVATE_KEY }}
   TF_VAR_atlas_org_id: ${{ secrets.ATLAS_ORG_ID }}
   TF_VAR_pg_password: ${{ secrets.PG_PASSWORD }}
-  TF_VAR_image_name: ghcr.io/${{ github.repository }}
-  TF_VAR_registry_username: ${{ github.repository_owner }}
+  TF_VAR_registry_username: ${{ github.actor }}
   TF_VAR_registry_password: ${{ secrets.GHCR_TOKEN }}
 
 jobs:
@@ -26,6 +25,8 @@ jobs:
         working-directory: infra
     steps:
       - uses: actions/checkout@v4
+      - name: Nombre de imagen en minusculas
+        run: echo "TF_VAR_image_name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
       - uses: hashicorp/setup-terraform@v3
       - run: terraform init
       - run: terraform validate
